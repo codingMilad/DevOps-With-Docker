@@ -1,0 +1,4 @@
+Because we are using the reverse proxi we need to build the backend and frontend dockerfiles first. We 
+need to change in the dockerfile from frontend the from ENV REACT_APP_BACKEND_URL=http://localhost:8080 to ENV REACT_APP_BACKEND_URL=http://localhost/api
+In the docker-compose.yml we add for the frontend under environment: - REACT_APP_BACKEND_URL=http://localhost/api
+and we also add for the backend under environment: - REQUEST_ORIGIN=http://localhost
