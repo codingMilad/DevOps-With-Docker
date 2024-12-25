@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  frontend:
+    image: frontend
+    build: example-frontend
+    container_name: Frontend
+    environment:
+      - REACT_APP_BACKEND_URL=http://localhost/api
+
+  backend:
+    image: backend
+    build: example-backend
+    environment:
+      - REDIS_HOST=redis
+      - POSTGRES_HOST=db
+      - POSTGRES_PASSWORD=example
+      - REQUEST_ORIGIN=http://localhost
+    container_name: Backend
+    depends_on:
+      - db
+      - redis
+
+  db:
+    image: postgres:13.2-alpine
+    restart: unless-stopped
+    volumes:
+      - database:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=example
+
+  redis:
+    image: redis
+    container_name: redis-db
+
+  nginx:
+    image: nginx
+    ports:
+      - 80:80
+    volumes:
+      - './nginx.conf:/etc/nginx/nginx.conf'
+    depends_on:
+      - backend
+      - frontend
+volumes:
+  database:
